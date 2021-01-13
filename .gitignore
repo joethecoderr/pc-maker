@@ -1,3 +1,7 @@
 /scrapers/chromedriver.exe
 /scrapers/.ipynb_checkpoints/*
 /scrapers/debug.log
+/.env/*
+/venv/*
+/debug.log
+/scrapers/__pycache__/

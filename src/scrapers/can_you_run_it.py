@@ -29,7 +29,7 @@ class WebShop():
             return xpath_search_bar
         else:
             return None
-            
+
     def search_hardware(self, hardware, driver):
         if re.search('amazon.com.mx', self.url):
             try:
@@ -113,7 +113,7 @@ def min_rec_systemreq(r):
 def scrape():
     url = 'https://www.systemrequirementslab.com/cyri'
     #driver = webdriver.Chrome(r"/mnt/c/Users/joele/Documents/pc-maker/scrapers/chromedriver.exe")
-    driver = webdriver.Chrome(r"C:/Users/joele/Documents/pc-maker/src/scrapers/chromedriver.exe")
+    driver = webdriver.Chrome('chromedriver.exe')
     wait = WebDriverWait(driver,40)
     driver.get(url)
     inputText = driver.find_element_by_id('index_drop_input')

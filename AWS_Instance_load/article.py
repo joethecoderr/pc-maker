@@ -5,7 +5,7 @@ from base import Base
 
 class Article(Base):
     __tablename__ = 'low_req_steam'
-    id = Column(String(200), primary_key=True)
+    id = Column(Integer(), primary_key=True, autoincrement = True)
     Game_Name = Column(String(255))
     Descr = Column(String(255))
     OS = Column(String(255))
@@ -17,8 +17,8 @@ class Article(Base):
     Notes = Column(String(255))
     
 
-    def __init__(self, uid, Game_Name, Descr, OS, Processor, Ram, Graphics, DirectX,size,Notes):
-        self.id = uid
+    def __init__(self, Game_Name, Descr, OS, Processor, Ram, Graphics, DirectX,size,Notes):
+
         self.Game_Name = Game_Name
         self.Descr = Descr
         self.OS = OS

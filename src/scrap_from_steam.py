@@ -19,7 +19,7 @@ chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
 
-def get_page_link_from_steam(game):
+def get_game_link(game):
   print(f"Getting page for {game} ..."  )
   driver = webdriver.Chrome('chromedriver',chrome_options=chrome_options)
   driver.get("https://store.steampowered.com/")
@@ -55,7 +55,8 @@ def get_page_link_from_steam(game):
    
   return driver.current_url
 
-def scrap_page_steam(link_path):
+def scrap_page(Game):
+  link_path = get_game_link(Game)
   print(f"Scraping {link_path} ..."  )
   headers = {'Content-Type': 'text/html',}
   response = requests.get(link_path, headers=headers)

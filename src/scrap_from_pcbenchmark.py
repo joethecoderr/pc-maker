@@ -17,7 +17,7 @@ chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
 
-def get_game_link_pcgbm(game):
+def get_game_link(game):
     
          
         print(f"Getting page for {game} ..."  )
@@ -39,8 +39,8 @@ def get_game_link_pcgbm(game):
         
         return driver.current_url
 
-def scrap_from_pcgbm(game):
-    game_url = get_game_link_pcgbm(game)
+def scrap_page(game):
+    game_url = get_game_link(game)
     print(f"Scraping {game_url} ..."  )
     headers = {'Content-Type': 'text/html',}
     response = requests.get(game_url, headers=headers)

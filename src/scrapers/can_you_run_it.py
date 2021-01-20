@@ -130,23 +130,18 @@ def scrape():
 
     if r.status_code == 200:
         minimun, rec = min_rec_systemreq(r)
-        print('Min requirements: ', minimun)
-        print('Recommended: ', rec)
-
-        #print(minimun[1][1])
+        #print('Min requirements: ', minimun)
+        #print('Recommended: ', rec)
         url_amazon = 'https://www.amazon.com.mx/'
         webshop = WebShop(url_amazon)
-        print('Instancie')
+        #print('Instancie')
         webshop.go_to_webshop(driver)
-        print('Voy a amazon')
+        #print('Voy a amazon')
         webshop.search_hardware(minimun[1][0] + minimun[1][1], driver)
         #print(webshop.get_xpath_for_shop())
-        result = webshop.get_first_three_results(driver)
-        if len(result) > 1:
-          return result
-        else:
-          return []        #print(webshop.get_shop_name())
-
+        amazon_ = webshop.get_first_three_results(driver)
+        #print(webshop.get_shop_name())
+        return amazon_ or [], minimun or [], rec or []
         #print(webshop.get_first_three_results(driver))
 # if __name__  == '__main__':
 #   scrape()

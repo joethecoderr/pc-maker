@@ -6,7 +6,8 @@ import pandas as  pd
 import numpy as np
 import scrap_from_pcbenchmark
 import scrap_from_steam
-from requirements import LowReqSteam
+#from requirements import LowReqSteam
+from requirements import LowReqCanYouRunIt
 from base import Base, engine, Session
 from scrapers.can_you_run_it import scrape
 
@@ -42,12 +43,8 @@ pcbenchmark_rec_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Proc
 def save_data(df):
     Base.metadata.create_all(engine)
     session = Session()
-    
     for row in range(len(df.index)):
-        
-       
         logger.info(f'Loading game info: {df["Game_Name"][row]}')
-   
         low_req_steam = LowReqSteam(
             df['Game_Name'][row],
             df['Descr'][row],
@@ -58,7 +55,6 @@ def save_data(df):
             df['DirectX'][row],
             df['size'][row],
             df['Notes'][row],
-            
                                       )
         session.add(low_req_steam)
     session.commit()
@@ -122,9 +118,7 @@ def fill_df(low_df, rec_df):
     rec_df.size =  rec_size_arr
     rec_df.Notes =  rec_notes_arr
     
-    
-    
-if __name__ == '__main__':
+def clear_arrays():
     low_Game_Name_arr.clear()
     low_Descr_arr.clear()
     low_OS_arr.clear()
@@ -134,7 +128,6 @@ if __name__ == '__main__':
     low_DirectX_arr.clear()
     low_size_arr.clear()
     low_notes_arr.clear()
-
     rec_Game_Name_arr.clear()
     rec_Descr_arr.clear()
     rec_OS_arr.clear()
@@ -145,11 +138,44 @@ if __name__ == '__main__':
     rec_size_arr.clear()
     rec_notes_arr.clear()
 
-    for game in ["Monster Hunter World", "Cyberpunk 2077"]:
-        fill_arrays(game, scrap_from_steam)
-       
+def save_data_canyourunit_reqs(reqs, low_or_rec):
+    Base.metadata.create_all(engine)
+    session = Session()
+    os = [os[1] for os in reqs if os[0] == "OS"]
+    cpu = [cpu[1] for cpu in reqs if cpu[0] == "CPU"]
+    ram = [ram[1] for ram in reqs if ram[0] == "RAM"]
+    graphics = [graphics[1] for graphics in reqs if graphics[0] == "VIDEO CARD"]
+    size = [size[1] for size in reqs if size[0] == "FREE DISK SPACE"]
+    if low_or_rec == "low":
+        low_req_canyourunit = LowReqCanYouRunIt(
+            "TEST",
+            "TEST",
+            os[0],
+            cpu[0],
+            ram[0],
+            graphics[0],
+            "Test",
+            size[0],
+            "TEST")
+        session.add(low_req_canyourunit)
+        session.commit()
+        session.close()
+    elif low_or_rec == "rec":
+        pass
+
     
-    fill_df(steam_low_req_df, steam_rec_req_df)
-    
-    save_data(steam_low_req_df)
-    save_data(steam_rec_req_df)
+if __name__ == '__main__':
+
+    # for game in ["Monster Hunter World", "Cyberpunk 2077"]:
+    #     fill_arrays(game, scrap_from_steam)
+
+    # fill_df(steam_low_req_df, steam_rec_req_df)
+    # save_data(steam_low_req_df)
+    # save_data(steam_rec_req_df)
+    amazon, minimun, rec = scrape()
+    if len(minimun) > 0:
+        print(minimun)
+        save_data_canyourunit_reqs(minimun, "low")
+    if len(rec) > 0:
+        print(rec)
+        save_data_canyourunit_reqs(rec, "rec")

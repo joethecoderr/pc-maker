@@ -110,14 +110,43 @@ def min_rec_systemreq(r):
     return []
   return list_tokenized_min, list_tokenized_rec
 
+def min_rec_systemreq2(driver):
+  list_tokenized_min = []
+  list_tokenized_rec = []
+  tple = ()
+#   html_home = r.content.decode('utf-8')
+#   parsed = html.fromstring(html_home)
+  try:
+    wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="list-line-height"]/ul[1]/li/text()')))
+    wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="list-line-height"]/ul[2]/li/text()')))
+    html_list_min = driver.find_element_by_xpath('//div[@class="list-line-height"]/ul[1]/li/text()')
+    print(html_list_min)
+    html_list_rec == driver.find_element_by_xpath('//div[@class="list-line-height"]/ul[2]/li/text()')
+    # html_list_min = parsed.xpath('//div[@class="list-line-height"]/ul[1]/li/text()')
+    # html_list_rec = parsed.xpath('//div[@class="list-line-height"]/ul[2]/li/text()')
+    for element in range(len(html_list_min)- 1):
+      hw, spec = html_list_min[element].split(':')
+      tple = (hw, spec)
+      list_tokenized_min.append(tple)
+      tple = ()
+    for element in range(len(html_list_rec) - 1):
+      hw, spec = html_list_rec[element].split(':')
+      tple = (hw, spec)
+      list_tokenized_rec.append(tple)
+      tple = ()
+  except:
+    return []
+  return list_tokenized_min, list_tokenized_rec
+
+  
+
 def scrape():
     url = 'https://www.systemrequirementslab.com/cyri'
-    #driver = webdriver.Chrome(r"/mnt/c/Users/joele/Documents/pc-maker/scrapers/chromedriver.exe")
     driver = webdriver.Chrome('chromedriver.exe')
     wait = WebDriverWait(driver,40)
     driver.get(url)
     inputText = driver.find_element_by_id('index_drop_input')
-    inputText.send_keys('Halo')
+    inputText.send_keys('Call of duty')
     wait.until(EC.visibility_of_element_located((By.ID, 'tipue_drop_wrapper')))
     #time.sleep(1)
     element = driver.find_element_by_xpath('//div[@id="tipue_drop_wrapper"]/a')
@@ -125,23 +154,14 @@ def scrape():
     wait.until(EC.visibility_of_element_located((By.ID, 'cyri-search-button')))
     button = driver.find_element_by_xpath('//div[@id="cyri-search-button"]')
     button.click()
-    driver.current_url
-    r = requests.get(driver.current_url)
+    r = requests.get(driver.current_url, timeout = 10)
 
     if r.status_code == 200:
+        time.sleep(.5)
         minimun, rec = min_rec_systemreq(r)
-        #print('Min requirements: ', minimun)
-        #print('Recommended: ', rec)
         url_amazon = 'https://www.amazon.com.mx/'
         webshop = WebShop(url_amazon)
-        #print('Instancie')
         webshop.go_to_webshop(driver)
-        #print('Voy a amazon')
         webshop.search_hardware(minimun[1][0] + minimun[1][1], driver)
-        #print(webshop.get_xpath_for_shop())
         amazon_ = webshop.get_first_three_results(driver)
-        #print(webshop.get_shop_name())
         return amazon_ or [], minimun or [], rec or []
-        #print(webshop.get_first_three_results(driver))
-# if __name__  == '__main__':
-#   scrape()

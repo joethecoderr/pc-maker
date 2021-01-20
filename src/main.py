@@ -7,7 +7,7 @@ import numpy as np
 import scrap_from_pcbenchmark
 import scrap_from_steam
 #from requirements import LowReqSteam
-from requirements import LowReqCanYouRunIt
+from requirements import LowReqCanYouRunIt, RecReqCanYouRunIt
 from base import Base, engine, Session
 from scrapers.can_you_run_it import scrape
 
@@ -160,8 +160,20 @@ def save_data_canyourunit_reqs(reqs, low_or_rec):
         session.add(low_req_canyourunit)
         session.commit()
         session.close()
-    elif low_or_rec == "rec":
-        pass
+    if low_or_rec == "rec":
+        rec_req_canyourunit = RecReqCanYouRunIt(
+            "TEST",
+            "TEST",
+            os[0],
+            cpu[0],
+            ram[0],
+            graphics[0],
+            "Test",
+            size[0],
+            "TEST")
+        session.add(rec_req_canyourunit)
+        session.commit()
+        session.close()
 
     
 if __name__ == '__main__':

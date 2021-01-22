@@ -160,7 +160,7 @@ def save_data_canyourunit_reqs(reqs, low_or_rec):
         session.add(low_req_canyourunit)
         session.commit()
         session.close()
-    if low_or_rec == "rec":
+    elif low_or_rec == "rec":
         rec_req_canyourunit = RecReqCanYouRunIt(
             "TEST",
             "TEST",
@@ -175,7 +175,15 @@ def save_data_canyourunit_reqs(reqs, low_or_rec):
         session.commit()
         session.close()
 
-    
+def scrape_all_games():
+    game_list = ['Halo 4', 'Call of Duty', 'Cyberpunk']
+    for game in game_list:
+        amazon, minimun, rec = scrape(game)
+        if len(minimun) > 0:
+            save_data_canyourunit_reqs(minimun, "low")
+        if len(rec) > 0:
+            save_data_canyourunit_reqs(rec, "rec")
+
 if __name__ == '__main__':
 
     # for game in ["Monster Hunter World", "Cyberpunk 2077"]:
@@ -184,10 +192,4 @@ if __name__ == '__main__':
     # fill_df(steam_low_req_df, steam_rec_req_df)
     # save_data(steam_low_req_df)
     # save_data(steam_rec_req_df)
-    amazon, minimun, rec = scrape()
-    if len(minimun) > 0:
-        print(minimun)
-        save_data_canyourunit_reqs(minimun, "low")
-    if len(rec) > 0:
-        print(rec)
-        save_data_canyourunit_reqs(rec, "rec")
+    scrape_all_games()

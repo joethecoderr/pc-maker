@@ -140,13 +140,13 @@ def min_rec_systemreq2(driver):
 
   
 
-def scrape():
+def scrape(game):
     url = 'https://www.systemrequirementslab.com/cyri'
     driver = webdriver.Chrome('chromedriver.exe')
     wait = WebDriverWait(driver,40)
     driver.get(url)
     inputText = driver.find_element_by_id('index_drop_input')
-    inputText.send_keys('Call of duty')
+    inputText.send_keys(game)
     wait.until(EC.visibility_of_element_located((By.ID, 'tipue_drop_wrapper')))
     #time.sleep(1)
     element = driver.find_element_by_xpath('//div[@id="tipue_drop_wrapper"]/a')
@@ -157,7 +157,7 @@ def scrape():
     r = requests.get(driver.current_url, timeout = 10)
 
     if r.status_code == 200:
-        time.sleep(.5)
+        time.sleep(1)
         minimun, rec = min_rec_systemreq(r)
         url_amazon = 'https://www.amazon.com.mx/'
         webshop = WebShop(url_amazon)

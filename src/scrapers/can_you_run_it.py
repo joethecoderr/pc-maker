@@ -122,9 +122,12 @@ def scrape():
     #time.sleep(1)
     element = driver.find_element_by_xpath('//div[@id="tipue_drop_wrapper"]/a')
     element.click()
+    
     wait.until(EC.visibility_of_element_located((By.ID, 'cyri-search-button')))
     button = driver.find_element_by_xpath('//div[@id="cyri-search-button"]')
     button.click()
+    
+    
     driver.current_url
     r = requests.get(driver.current_url)
 

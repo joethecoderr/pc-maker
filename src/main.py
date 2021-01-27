@@ -14,14 +14,6 @@ from base import Base, engine, Session
 from scrapers.can_you_run_it import scrape
 
 
-
-dummy_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
-steam_low_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
-steam_rec_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
-
-pcbenchmark_low_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
-pcbenchmark_rec_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
-
 def save_data_req_steam(game,descr, data, low_or_rec):
     Base.metadata.create_all(engine)
     session = Session()

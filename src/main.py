@@ -6,14 +6,15 @@ import pandas as  pd
 import numpy as np
 import scrap_from_pcbenchmark
 import scrap_from_steam
+
 from requirements import LowReqSteam, RecReqSteam, LowReqPCGBM, RecReqPCGBM
-from requirements import LowReqCanYouRunIt
+from requirements import LowReqCanYouRunIt, RecReqCanYouRunIt
+
 from base import Base, engine, Session
 from scrapers.can_you_run_it import scrape
 
 
 
-logger = logging.getLogger(__name__)
 dummy_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
 steam_low_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
 steam_rec_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
@@ -56,7 +57,7 @@ def save_data_req_steam(game,descr, data, low_or_rec):
             
     if low_or_rec == "low":
        
-        logger.info(f'Loading game info: {game}')
+      #  logger.info(f'Loading game info: {game}')
         low_req_steam = LowReqSteam(
             game,
             descr,
@@ -73,7 +74,7 @@ def save_data_req_steam(game,descr, data, low_or_rec):
         session.close()
     else:
 
-        logger.info(f'Loading game info: {game}')
+       # logger.info(f'Loading game info: {game}')
         rec_req_steam = RecReqSteam(
             game,
             descr,
@@ -126,7 +127,7 @@ def save_data_req_pcbm(game,descr, data, low_or_rec):
             
     if low_or_rec == "low":
        
-        logger.info(f'Loading game info : {game}')
+     #   logger.info(f'Loading game info : {game}')
         low_req_pcgbm = LowReqPCGBM(
             game,
             descr,
@@ -143,7 +144,7 @@ def save_data_req_pcbm(game,descr, data, low_or_rec):
         session.close()
     else:
 
-        logger.info(f'Loading game info: {game}')
+   #     logger.info(f'Loading game info: {game}')
         rec_req_pcgbm = RecReqPCGBM(
             game,
             descr,
@@ -162,11 +163,16 @@ def save_data_req_pcbm(game,descr, data, low_or_rec):
 def save_data_canyourunit_reqs(reqs, low_or_rec):
     Base.metadata.create_all(engine)
     session = Session()
-    os = [os[1] for os in reqs if os[0] == "OS"]
+    os = [os[1] for os in reqs if os[0] == "OS" ]
+    if len(os) == 0 : os = [' ']
     cpu = [cpu[1] for cpu in reqs if cpu[0] == "CPU"]
+    if len(cpu) == 0 : os = ['']
     ram = [ram[1] for ram in reqs if ram[0] == "RAM"]
-    graphics = [graphics[1] for graphics in reqs if graphics[0] == "VIDEO CARD"]
+    if len(ram) == 0 : ram = ['']
+    graphics = [graphics[1]  for graphics in reqs if graphics[0] == "VIDEO CARD"]
+    if len(graphics) == 0 : graphics = ['']
     size = [size[1] for size in reqs if size[0] == "FREE DISK SPACE"]
+    if len(size) == 0 : size = ['']
     if low_or_rec == "low":
         low_req_canyourunit = LowReqCanYouRunIt(
             "TEST",
@@ -182,9 +188,29 @@ def save_data_canyourunit_reqs(reqs, low_or_rec):
         session.commit()
         session.close()
     elif low_or_rec == "rec":
-        pass
+        rec_req_canyourunit = RecReqCanYouRunIt(
+            "TEST",
+            "TEST",
+            os[0],
+            cpu[0],
+            ram[0],
+            graphics[0],
+            "Test",
+            size[0],
+            "TEST")
+        session.add(rec_req_canyourunit)
+        session.commit()
+        session.close()
 
-    
+def scrape_all_games():
+    game_list = ['Halo 4']
+    for game in game_list:
+        amazon, minimun, rec = scrape(game)
+        if len(minimun) > 0:
+            save_data_canyourunit_reqs(minimun, "low")
+        if len(rec) > 0:
+            save_data_canyourunit_reqs(rec, "rec")
+
 if __name__ == '__main__':
 
     for game in ["Cyberpunk 2077", "Fall Guys", "Among Us", "Resident Evil 1"]:
@@ -198,10 +224,6 @@ if __name__ == '__main__':
         save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
 
 
-    # amazon, minimun, rec = scrape()
-    # if len(minimun) > 0:
-    #     print(minimun)
-    #     save_data_canyourunit_reqs(minimun, "low")
-    # if len(rec) > 0:
-    #     print(rec)
-    #     save_data_canyourunit_reqs(rec, "rec")
+
+    scrape_all_games()
+

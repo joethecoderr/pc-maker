@@ -159,15 +159,6 @@ def save_data_req_pcbm(game,descr, data, low_or_rec):
         session.commit()
         session.close()    
 
-    
-
-
-    
-   
-      
-
-
-
 def save_data_canyourunit_reqs(reqs, low_or_rec):
     Base.metadata.create_all(engine)
     session = Session()

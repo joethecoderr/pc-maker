@@ -23,38 +23,24 @@ pcbenchmark_low_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Proc
 pcbenchmark_rec_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
 
 def save_data_req_steam(game,descr, data, low_or_rec):
-   
     Base.metadata.create_all(engine)
     session = Session()
     descr = ''.join(descr)
-   
-
     os = [row[1]  for row in data if row[0] == "OS:"] 
-    if len(os) == 0:
-        os = [""]
-        
+    if len(os) == 0: os = [""]
     cpu = [cpu[1] for cpu in data if cpu[0] == "Processor:" ] 
-    if len(cpu) == 0:
-        cpu = [""]
-    
+    if len(cpu) == 0: cpu = [""]
     ram = [ram[1]  for ram in data if ram[0] == "Memory:"]
-    if len(ram) == 0:
-        ram = [""]
-    
+    if len(ram) == 0: ram = [""]
     gpu = [graphics[1] for graphics in data if graphics[0] == "Graphics:"]
-    if len(gpu) == 0:
-        gpu = [""]
+    if len(gpu) == 0: gpu = [""]
     DX = [direct[1]  for direct in data if direct[0] == "DirectX:"]
-    if len(DX) == 0:
-        DX = [""]
+    if len(DX) == 0: DX = [""]
     size = [size[1] for size in data if size[0] == "Storage:"]
-    if len(size) == 0:
-        size = [""]
+    if len(size) == 0: size = [""]
     note = [note[1] for note in data if note[0] == "Additional Notes:" ]
-    if len(note) == 0:
-        note = [""]
+    if len(note) == 0: note = [""]
 
-            
     if low_or_rec == "low":
        
       #  logger.info(f'Loading game info: {game}')
@@ -100,34 +86,21 @@ def save_data_req_pcbm(game,descr, data, low_or_rec):
    
 
     os = [row[1]  for row in data if row[0] == "OS:"] 
-    if len(os) == 0:
-        os = [""]
-        
+    if len(os) == 0: os = [""]
     cpu = [cpu[1] for cpu in data if cpu[0] == "CPU:" ] 
-    if len(cpu) == 0:
-        cpu = [""]
-    
+    if len(cpu) == 0: cpu = [""]
     ram = [ram[1]  for ram in data if ram[0] == "Memory:"]
-    if len(ram) == 0:
-        ram = [""]
-    
+    if len(ram) == 0: ram = [""]
     gpu = [graphics[1] for graphics in data if graphics[0] == "Graphics Card:"]
-    if len(gpu) == 0:
-        gpu = [""]
+    if len(gpu) == 0: gpu = [""]
     DX = [direct[1]  for direct in data if direct[0] == "DirectX:"]
-    if len(DX) == 0:
-        DX = [""]
+    if len(DX) == 0: DX = [""]
     size = [size[1] for size in data if "File Size:" in size[0]]
-    if len(size) == 0:
-        size = [""]
+    if len(size) == 0: size = [""]
     note = [note[1] for note in data if note[0] == "Additional Notes:" ]
-    if len(note) == 0:
-        note = [""]
+    if len(note) == 0: note = [""]
 
-            
     if low_or_rec == "low":
-       
-     #   logger.info(f'Loading game info : {game}')
         low_req_pcgbm = LowReqPCGBM(
             game,
             descr,

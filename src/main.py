@@ -6,7 +6,7 @@ import pandas as  pd
 import numpy as np
 import scrap_from_pcbenchmark
 import scrap_from_steam
-
+import get_games
 from requirements import LowReqSteam, RecReqSteam, LowReqPCGBM, RecReqPCGBM
 from requirements import LowReqCanYouRunIt, RecReqCanYouRunIt
 
@@ -177,18 +177,19 @@ def scrape_all_games():
             save_data_canyourunit_reqs(rec, "rec")
 
 if __name__ == '__main__':
-
-    for game in ["Cyberpunk 2077", "Fall Guys", "Among Us", "Resident Evil 1"]:
+    games = get_games.Get_names('https://www.pcgamesn.com/best-pc-games')
+    print(games)
+    for game in games:
         data_desc, merged_arr_min, merged_arr_rec  = scrap_from_steam.scrap_page(game)
         
         save_data_req_steam(game, data_desc,merged_arr_min, "low")
         save_data_req_steam(game, data_desc, merged_arr_rec, "rec")
        
-        data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrap_from_pcbenchmark.scrap_page(game)
-        save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
-        save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
+        #data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrap_from_pcbenchmark.scrap_page(game)
+        #save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
+        #save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
 
 
 
-    scrape_all_games()
+    #scrape_all_games()
 

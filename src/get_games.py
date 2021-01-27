@@ -24,16 +24,18 @@ def Get_names(link):
  
   print(f"Scraping {link} ..."  )
   headers = {'Content-Type': 'text/html',}
+  
   response = requests.get(link, headers=headers)
+ 
   raw_html = response.text
   html = etree.HTML(raw_html)
-  print(html)
+  ##print(raw_html)
 #Get description
-  xpath_for_names = "//div/table/tbody/tr/td[(@Class = 'details')]/a//h3[0]/text()"
+  xpath_for_names = "//div[@id='site_wrap']/article/div/h2/text()"
   Game_names = html.xpath(xpath_for_names)
-
-
-
+  #print(Game_names)
   return Game_names
-names_ = Get_names('https://www.metacritic.com/browse/games/score/metascore/all/pc/filtered?view=condensed')
+
+##Get_names('https://www.pcgamesn.com/best-pc-games')
+#print(names_)
 #print(scrap_page_steam(steam_link))

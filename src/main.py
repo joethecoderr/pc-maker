@@ -32,7 +32,6 @@ rec_DirectX_arr = []
 rec_size_arr = []
 rec_notes_arr = []
 
-logger = logging.getLogger(__name__)
 dummy_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
 steam_low_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
 steam_rec_req_df = pd.DataFrame(columns=["Game_Name","Descr", "OS" , "Processor", "Ram", "Graphics", "DirectX",  "size",  "Notes"])
@@ -141,11 +140,16 @@ def clear_arrays():
 def save_data_canyourunit_reqs(reqs, low_or_rec):
     Base.metadata.create_all(engine)
     session = Session()
-    os = [os[1] for os in reqs if os[0] == "OS"]
+    os = [os[1] for os in reqs if os[0] == "OS" ]
+    if len(os) == 0 : os = [' ']
     cpu = [cpu[1] for cpu in reqs if cpu[0] == "CPU"]
+    if len(cpu) == 0 : os = ['']
     ram = [ram[1] for ram in reqs if ram[0] == "RAM"]
-    graphics = [graphics[1] for graphics in reqs if graphics[0] == "VIDEO CARD"]
+    if len(ram) == 0 : ram = ['']
+    graphics = [graphics[1]  for graphics in reqs if graphics[0] == "VIDEO CARD"]
+    if len(graphics) == 0 : graphics = ['']
     size = [size[1] for size in reqs if size[0] == "FREE DISK SPACE"]
+    if len(size) == 0 : size = ['']
     if low_or_rec == "low":
         low_req_canyourunit = LowReqCanYouRunIt(
             "TEST",
@@ -176,7 +180,7 @@ def save_data_canyourunit_reqs(reqs, low_or_rec):
         session.close()
 
 def scrape_all_games():
-    game_list = ['Halo 4', 'Call of Duty', 'Cyberpunk']
+    game_list = ['Halo 4']
     for game in game_list:
         amazon, minimun, rec = scrape(game)
         if len(minimun) > 0:

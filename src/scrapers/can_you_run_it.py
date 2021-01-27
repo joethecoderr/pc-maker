@@ -159,9 +159,10 @@ def scrape(game):
     if r.status_code == 200:
         time.sleep(1)
         minimun, rec = min_rec_systemreq(r)
-        url_amazon = 'https://www.amazon.com.mx/'
-        webshop = WebShop(url_amazon)
-        webshop.go_to_webshop(driver)
-        webshop.search_hardware(minimun[1][0] + minimun[1][1], driver)
-        amazon_ = webshop.get_first_three_results(driver)
+        amazon_ = []
+        # url_amazon = 'https://www.amazon.com.mx/'
+        # webshop = WebShop(url_amazon)
+        # webshop.go_to_webshop(driver)
+        # webshop.search_hardware(minimun[1][0] + minimun[1][1], driver)
+        # amazon_ = webshop.get_first_three_results(driver)
         return amazon_ or [], minimun or [], rec or []

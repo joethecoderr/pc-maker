@@ -178,16 +178,33 @@ def scrape_all_games():
 
 if __name__ == '__main__':
     games = get_games.Get_names('https://www.pcgamesn.com/best-pc-games')
+    
     print(games)
-    for game in games:
-        data_desc, merged_arr_min, merged_arr_rec  = scrap_from_steam.scrap_page(game)
+    for game in games[25:]:
         
-        save_data_req_steam(game, data_desc,merged_arr_min, "low")
-        save_data_req_steam(game, data_desc, merged_arr_rec, "rec")
+        if game == "PLAYERUNKNOWN’S BATTLEGROUNDS":
+            game = "PUBG"
+            
+        if game == "TOTAL WAR: WARHAMMER 2":
+            game = "TOTAL WAR: WARHAMMER II"
+            
+        if game == "THE WITCHER 3: WILD HUNT":
+            game = "The Witcher 3"
+            
+        if game == "CITIES: SKYLINES":
+            game = "Cities Skylines"
+        
+            
+        if game != "LEAGUE OF LEGENDS" and game != "Valorant" and game != "Apex Legends" and game != "OVERWATCH" and  game != "WORLD OF WARCRAFT" and  game != "minecraft":
+            data_desc, merged_arr_min, merged_arr_rec  = scrap_from_steam.scrap_page(game)
+            save_data_req_steam(game, data_desc,merged_arr_min, "low")
+            save_data_req_steam(game, data_desc, merged_arr_rec, "rec")            
+            
+
        
-        #data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrap_from_pcbenchmark.scrap_page(game)
-        #save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
-        #save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
+        data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrap_from_pcbenchmark.scrap_page(game)
+        save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
+        save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
 
 
 

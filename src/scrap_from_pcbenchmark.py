@@ -52,15 +52,15 @@ def scrap_page(game):
     description_txt = html.xpath(xpath_for_description)
     
     #Get Minimum Requirements
-    xpath_for_min_req_strongs = "//div[(@class = 'row requirements')]/div[1]/ul/li/strong/text() | //div[(@class = 'requirements')]/ul/li/strong/text()"# with | like an or, we will use either one of the xpath (If we want to add other 'or' python has problems)
-       
-    xpath_for_min_req = "//div[(@class = 'row requirements')]/div[1]/ul/li[strong]/text() | //div[(@class = 'requirements')]/ul/li[strong]/text()" #With [] we say to look for those li with strong
+    xpath_for_min_req_strongs = "//div[(@class = 'row requirements')]/div[2]/ul/li/strong/text() | //div[(@class = 'requirements')]/ul[2]/li/strong/text()"# with | like an or, we will use either one of the xpath (If we want to add other 'or' python has problems)
+    xpath_for_min_req = "//div[(@class = 'row requirements')]/div[2]/ul/li[strong]/text() | //div[(@class = 'requirements')]/ul[2]/li[strong]/text()" #With [] we say to look for those li with strong
     min_req_strongs = html.xpath(xpath_for_min_req_strongs)
     min_req_txt = html.xpath(xpath_for_min_req)
     
     #Get Recommended Requirements
-    xpath_for_recommended_req_strongs = "//div[(@class = 'row requirements')]/div[2]/ul/li/strong/text()"
-    xpath_for_recommended_req = "//div[(@class = 'row requirements')]/div[2]/ul/li[strong]/text()"#With [] we say to look for those li with strong
+    
+    xpath_for_recommended_req_strongs = "//div[(@class = 'row requirements')]/div[1]/ul/li/strong/text() | //div[(@class = 'requirements')]/ul[1]/li/strong/text()"
+    xpath_for_recommended_req = "//div[(@class = 'row requirements')]/div[1]/ul/li[strong]/text() | //div[(@class = 'requirements')]/ul[1]/li[strong]/text()"#With [] we say to look for those li with strong
     recommended_req_strongs = html.xpath(xpath_for_recommended_req_strongs)
     recommended_req_txt = html.xpath(xpath_for_recommended_req)
     

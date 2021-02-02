@@ -86,7 +86,7 @@ def scrap_page(Game):
   merged_list_rec = [(recommended_req_strongs[i], recommended_req_txt[i]) for i in range(0, len(recommended_req_strongs)) ]
   merged_arr_recommended = np.array(merged_list_rec)
 
-  return description_txt, merged_arr_min, merged_arr_recommended
+  return description_txt, merged_arr_min, merged_arr_recommended, link_path
 
 #steam_link = get_page_link_from_steam("Cyberpunk")
 #print(scrap_page_steam(steam_link))

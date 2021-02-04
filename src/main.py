@@ -1,11 +1,10 @@
 #Instance Of article
 import argparse
 import logging
-logging.basicConfig(level=logging.INFO)
 import pandas as  pd
 import numpy as np
-import scrap_from_pcbenchmark
-import scrap_from_steam
+import scrapers.scrap_from_pcbenchmark
+import scrapers.scrap_from_steam
 import get_games
 from requirements import LowReqSteam, RecReqSteam, LowReqPCGBM, RecReqPCGBM
 from requirements import LowReqCanYouRunIt, RecReqCanYouRunIt
@@ -34,8 +33,6 @@ def save_data_req_steam(game,descr, data, low_or_rec):
     if len(note) == 0: note = [""]
 
     if low_or_rec == "low":
-       
-      #  logger.info(f'Loading game info: {game}')
         low_req_steam = LowReqSteam(
             game,
             descr,
@@ -51,8 +48,6 @@ def save_data_req_steam(game,descr, data, low_or_rec):
         session.commit()
         session.close()
     else:
-
-       # logger.info(f'Loading game info: {game}')
         rec_req_steam = RecReqSteam(
             game,
             descr,
@@ -68,15 +63,11 @@ def save_data_req_steam(game,descr, data, low_or_rec):
         session.commit()
         session.close()    
 
-
-    
 def save_data_req_pcbm(game,descr, data, low_or_rec):
     print(f"PCBM: {data}")
     Base.metadata.create_all(engine)
     session = Session()
     descr = ''.join(descr)
-   
-
     os = [row[1]  for row in data if row[0] == "OS:"] 
     if len(os) == 0: os = [""]
     cpu = [cpu[1] for cpu in data if cpu[0] == "CPU:" ] 
@@ -108,8 +99,6 @@ def save_data_req_pcbm(game,descr, data, low_or_rec):
         session.commit()
         session.close()
     else:
-
-   #     logger.info(f'Loading game info: {game}')
         rec_req_pcgbm = RecReqPCGBM(
             game,
             descr,
@@ -125,7 +114,7 @@ def save_data_req_pcbm(game,descr, data, low_or_rec):
         session.commit()
         session.close()    
 
-def save_data_canyourunit_reqs(reqs, low_or_rec):
+def save_data_canyourunit_reqs(reqs, low_or_rec, game_name):
     Base.metadata.create_all(engine)
     session = Session()
     os = [os[1] for os in reqs if os[0] == "OS" ]
@@ -140,7 +129,7 @@ def save_data_canyourunit_reqs(reqs, low_or_rec):
     if len(size) == 0 : size = ['']
     if low_or_rec == "low":
         low_req_canyourunit = LowReqCanYouRunIt(
-            "TEST",
+            game_name,
             "TEST",
             os[0],
             cpu[0],
@@ -154,7 +143,7 @@ def save_data_canyourunit_reqs(reqs, low_or_rec):
         session.close()
     elif low_or_rec == "rec":
         rec_req_canyourunit = RecReqCanYouRunIt(
-            "TEST",
+            game_name,
             "TEST",
             os[0],
             cpu[0],
@@ -167,29 +156,28 @@ def save_data_canyourunit_reqs(reqs, low_or_rec):
         session.commit()
         session.close()
 
-def scrape_all_games():
-    game_list = ['Halo 4']
-    for game in game_list:
+def scrape_from_canyourunit(games):
+    for game in games:
+        if game == 'PLAYERUNKNOWN’S BATTLEGROUNDS' : game = 'PUBG'
         amazon, minimun, rec = scrape(game)
         if len(minimun) > 0:
-            save_data_canyourunit_reqs(minimun, "low")
+            save_data_canyourunit_reqs(minimun, "low", game)
         if len(rec) > 0:
-            save_data_canyourunit_reqs(rec, "rec")
+            save_data_canyourunit_reqs(rec, "rec", game)
+
+def scrape_from_steam(games):
+    for game in games:
+        data_desc, merged_arr_min, merged_arr_rec  = scrapers.scrap_from_steam.scrap_page(game)
+        save_data_req_steam(game, data_desc,merged_arr_min, "low")
+        save_data_req_steam(game, data_desc, merged_arr_rec, "rec")
+        data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrapers.scrap_from_pcbenchmark.scrap_page(game)
+        save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
+        save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
 
 if __name__ == '__main__':
     games = get_games.Get_names('https://www.pcgamesn.com/best-pc-games')
     print(games)
-    for game in games:
-        data_desc, merged_arr_min, merged_arr_rec  = scrap_from_steam.scrap_page(game)
-        
-        save_data_req_steam(game, data_desc,merged_arr_min, "low")
-        save_data_req_steam(game, data_desc, merged_arr_rec, "rec")
-       
-        #data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrap_from_pcbenchmark.scrap_page(game)
-        #save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
-        #save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
 
 
-
-    #scrape_all_games()
+    scrape_from_canyourunit(games)
 

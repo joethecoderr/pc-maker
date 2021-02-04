@@ -19,23 +19,20 @@ chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
 
 
-
 def Get_names(link):
- 
-  print(f"Scraping {link} ..."  )
-  headers = {'Content-Type': 'text/html',}
-  
-  response = requests.get(link, headers=headers)
- 
-  raw_html = response.text
-  html = etree.HTML(raw_html)
-  ##print(raw_html)
-#Get description
-  xpath_for_names = "//div[@id='site_wrap']/article/div/h2/text()"
-  Game_names = html.xpath(xpath_for_names)
-  #print(Game_names)
-  return Game_names
-
-##Get_names('https://www.pcgamesn.com/best-pc-games')
-#print(names_)
-#print(scrap_page_steam(steam_link))
+  driver = webdriver.Chrome('chromedriver',chrome_options=chrome_options)
+  driver.get(link)
+  wait = WebDriverWait(driver,10)
+  raw_names=[]
+  for i in range(20):
+      print(f"Scraping {driver.current_url} ..."  )
+      headers = {'Content-Type': 'text/html',}
+      response = requests.get(driver.current_url, headers=headers)
+      raw_html = response.text
+      html = etree.HTML(raw_html)
+    #Get description
+      xpath_for_names = "//div[@class='games-list']/div[@class='item']/div[2]/a/text()"
+      Game_names = html.xpath(xpath_for_names)
+      raw_names= raw_names +  [game_name.replace(" System Requirements", "") for game_name in Game_names]
+      elem = driver.find_element_by_class_name("next").click()
+  return raw_names

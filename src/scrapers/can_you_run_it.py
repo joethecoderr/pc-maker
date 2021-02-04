@@ -131,12 +131,8 @@ def scrape(game):
     tempu.click()
     inputText = driver.find_element_by_class_name('select2-search__field')
     inputText.send_keys(game)
-    print('visibilidad no')
     wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'select2-results')))
-    print('Visibilidad si')
-    #time.sleep(1)
     element = driver.find_element_by_class_name('select2-results__options')
-
     element.click()
     current_url = driver.current_url
     button = driver.find_element_by_id('button-cyri-bigblue')

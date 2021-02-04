@@ -31,12 +31,8 @@ def get_game_link(game):
   elem.send_keys(game)
   elem.send_keys(Keys.ENTER)
 
- # print(driver.page_source)
- 
   driver.find_element_by_xpath("//div[(@id = 'search_resultsRows')]/a[1]").click()
   source_str =  str(driver.page_source)
-   #If not appropiate for all ages
-  #print(source_str)
   if "View Page" in source_str:
     print("entered")
 
@@ -44,15 +40,12 @@ def get_game_link(game):
     element = driver.find_element_by_xpath("//select[@name='ageYear']")
     all_options = element.find_elements_by_tag_name("option")
     for option in all_options:
-      #print("Value is: %s" % option.get_attribute("value"))
       if  option.get_attribute("value") == '1900':
         print("clicked")
         option.click()
-        
 
     driver.find_element_by_xpath("//div[(@class = 'main_content_ctn')]/div[@class = 'agegate_text_container btns']/a[1]").click() 
     wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'game_area_purchase_game')))
-   
   return driver.current_url
 
 def scrap_page(Game):
@@ -62,11 +55,9 @@ def scrap_page(Game):
   response = requests.get(link_path, headers=headers)
   raw_html = response.text
   html = etree.HTML(raw_html)
-
 #Get description
   xpath_for_description = "//div[(@id = 'game_area_description')]/text()"
   description_txt = html.xpath(xpath_for_description)
-
 #Get Minimum Requirements
   xpath_for_min_req_strongs = "//div[(@class = 'game_area_sys_req_leftCol')]/ul/ul//strong/text()"
   xpath_for_min_req = "//div[(@class = 'game_area_sys_req_leftCol')]/ul/ul/li[strong]/text()" #With [] we say to look for those li with strong
@@ -86,7 +77,7 @@ def scrap_page(Game):
   merged_list_rec = [(recommended_req_strongs[i], recommended_req_txt[i]) for i in range(0, len(recommended_req_strongs)) ]
   merged_arr_recommended = np.array(merged_list_rec)
 
-  return description_txt, merged_arr_min, merged_arr_recommended
+  return description_txt, merged_arr_min, merged_arr_recommended, link_path
 
 #steam_link = get_page_link_from_steam("Cyberpunk")
 #print(scrap_page_steam(steam_link))

@@ -1,4 +1,3 @@
-#Instance Of article
 import argparse
 import logging
 import pandas as  pd
@@ -70,7 +69,7 @@ def save_data_req_pcbm(game,descr, data, low_or_rec):
     descr = ''.join(descr)
     os = [row[1]  for row in data if row[0] == "OS:"] 
     if len(os) == 0: os = [""]
-    cpu = [cpu[1] for cpu in data if cpu[0] == "CPU:" ] 
+    cpu = [cpu[1] for cpu in data if "CPU:" in cpu[0]] 
     if len(cpu) == 0: cpu = [""]
     ram = [ram[1]  for ram in data if ram[0] == "Memory:"]
     if len(ram) == 0: ram = [""]
@@ -171,13 +170,16 @@ def scrape_from_steam(games):
         save_data_req_steam(game, data_desc,merged_arr_min, "low")
         save_data_req_steam(game, data_desc, merged_arr_rec, "rec")
         data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrapers.scrap_from_pcbenchmark.scrap_page(game)
+
+if __name__ == '__main__':
+    games = get_games.Get_names('https://www.pcgamebenchmark.com/best-pc-games?tags=&sort=0')
+    for game in games:
+        data_desc, merged_arr_min, merged_arr_rec, link_path  = scrap_from_steam.scrap_page(game)
+        if game.replace(" ", "_") in link_path:
+            save_data_req_steam(game, data_desc,merged_arr_min, "low")
+            save_data_req_steam(game, data_desc, merged_arr_rec, "rec")            
+        data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrap_from_pcbenchmark.scrap_page(game)
         save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
         save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
 
-if __name__ == '__main__':
-    games = get_games.Get_names('https://www.pcgamesn.com/best-pc-games')
-    print(games)
-
-
-    scrape_from_canyourunit(games)
 

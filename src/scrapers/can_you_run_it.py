@@ -90,19 +90,24 @@ class WebShop():
 def min_rec_systemreq(r):
   list_tokenized_min = []
   list_tokenized_rec = []
+  
   tple = ()
   html_home = r.content.decode('utf-8')
   parsed = html.fromstring(html_home)
   try:
-    html_list_min = parsed.xpath('//div[@class="list-line-height"]/ul[1]/li/text()')
-    html_list_rec = parsed.xpath('//div[@class="list-line-height"]/ul[2]/li/text()')
-    for element in range(len(html_list_min)- 1):
-      hw, spec = html_list_min[element].split(':')
+    html_list_min = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div[1]/div/div/div[4]/div[2]/div/ul/li//text()')
+    html_list_min_joined = [html_list_min[i] + html_list_min[i+1] for i in range(0, len(html_list_min)-1, 2)]
+    print(html_list_min_joined)
+    html_list_rec = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div[1]/div/div/div[4]/div[4]/div/ul/li//text()')
+    html_list_rec_joined = [html_list_rec[i] + html_list_rec[i+1] for i in range(0, len(html_list_rec)-1, 2)]
+    print(html_list_rec_joined)
+    for element in range(len(html_list_min_joined)- 1):
+      hw, spec = html_list_min_joined[element].split(':')
       tple = (hw, spec)
       list_tokenized_min.append(tple)
       tple = ()
-    for element in range(len(html_list_rec) - 1):
-      hw, spec = html_list_rec[element].split(':')
+    for element in range(len(html_list_rec_joined) - 1):
+      hw, spec = html_list_rec_joined[element].split(':')
       tple = (hw, spec)
       list_tokenized_rec.append(tple)
       tple = ()
@@ -110,65 +115,35 @@ def min_rec_systemreq(r):
     return []
   return list_tokenized_min, list_tokenized_rec
 
-def min_rec_systemreq2(driver):
-  list_tokenized_min = []
-  list_tokenized_rec = []
-  tple = ()
-#   html_home = r.content.decode('utf-8')
-#   parsed = html.fromstring(html_home)
-  try:
-    wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="list-line-height"]/ul[1]/li/text()')))
-    wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="list-line-height"]/ul[2]/li/text()')))
-    html_list_min = driver.find_element_by_xpath('//div[@class="list-line-height"]/ul[1]/li/text()')
-    print(html_list_min)
-    html_list_rec == driver.find_element_by_xpath('//div[@class="list-line-height"]/ul[2]/li/text()')
-    # html_list_min = parsed.xpath('//div[@class="list-line-height"]/ul[1]/li/text()')
-    # html_list_rec = parsed.xpath('//div[@class="list-line-height"]/ul[2]/li/text()')
-    for element in range(len(html_list_min)- 1):
-      hw, spec = html_list_min[element].split(':')
-      tple = (hw, spec)
-      list_tokenized_min.append(tple)
-      tple = ()
-    for element in range(len(html_list_rec) - 1):
-      hw, spec = html_list_rec[element].split(':')
-      tple = (hw, spec)
-      list_tokenized_rec.append(tple)
-      tple = ()
-  except:
-    return []
-  return list_tokenized_min, list_tokenized_rec
 
   
 
 def scrape(game):
     url = 'https://www.systemrequirementslab.com/cyri'
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
     driver = webdriver.Chrome('chromedriver.exe')
     wait = WebDriverWait(driver,40)
     driver.get(url)
-    inputText = driver.find_element_by_id('index_drop_input')
+    tempu = driver.find_element_by_class_name('select2-selection__rendered')
+    tempu.click()
+    inputText = driver.find_element_by_class_name('select2-search__field')
     inputText.send_keys(game)
-    wait.until(EC.visibility_of_element_located((By.ID, 'tipue_drop_wrapper')))
-    #time.sleep(1)
-    element = driver.find_element_by_xpath('//div[@id="tipue_drop_wrapper"]/a')
+    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'select2-results')))
+    element = driver.find_element_by_class_name('select2-results__options')
     element.click()
-    
-    wait.until(EC.visibility_of_element_located((By.ID, 'cyri-search-button')))
-    button = driver.find_element_by_xpath('//div[@id="cyri-search-button"]')
+    current_url = driver.current_url
+    button = driver.find_element_by_id('button-cyri-bigblue')
     button.click()
-
-    
-    
+    WebDriverWait(driver, 15).until(EC.url_changes(current_url))
     driver.current_url
     r = requests.get(driver.current_url)
 
-
     if r.status_code == 200:
-        time.sleep(1)
+        time.sleep(1.5)
         minimun, rec = min_rec_systemreq(r)
         amazon_ = []
-        # url_amazon = 'https://www.amazon.com.mx/'
-        # webshop = WebShop(url_amazon)
-        # webshop.go_to_webshop(driver)
-        # webshop.search_hardware(minimun[1][0] + minimun[1][1], driver)
-        # amazon_ = webshop.get_first_three_results(driver)
+        driver.close()
         return amazon_ or [], minimun or [], rec or []

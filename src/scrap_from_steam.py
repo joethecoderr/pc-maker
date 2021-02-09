@@ -61,6 +61,8 @@ def scrap_page(Game):
   headers = {'Content-Type': 'text/html',}
   response = requests.get(link_path, headers=headers)
   raw_html = response.text
+  #response.encoding = 'ISO-8859-1'
+  print(response.encoding)
   html = etree.HTML(raw_html)
 
 #Get description

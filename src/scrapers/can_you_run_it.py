@@ -157,14 +157,38 @@ def loop(game):
 
 
 def scrape(game):
-
-    r = loop(game)
     minimun = []
     rec = []
     amazon_ = []
-    if  r.status_code == 200:
-        time.sleep(1.5)
-        minimun, rec = min_rec_systemreq(r)
-        amazon_ = []
-        
+    try:
+        url = 'https://www.systemrequirementslab.com/cyri'
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--no-startup-window')
+        driver = webdriver.Chrome('chromedriver.exe', chrome_options=chrome_options)
+        wait = WebDriverWait(driver,40)
+        driver.get(url)
+        tempu = driver.find_element_by_class_name('select2-selection__rendered')
+        tempu.click()
+        inputText = driver.find_element_by_class_name('select2-search__field')
+        inputText.send_keys(game)
+        wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'select2-results')))
+        element = driver.find_element_by_class_name('select2-results__options')
+        element.click()
+        current_url = driver.current_url
+        wait.until(EC.element_to_be_clickable((By.ID, 'button-cyri-bigblue')))
+        button = driver.find_element_by_id('button-cyri-bigblue')
+        button.click()
+        WebDriverWait(driver, 15).until(EC.url_changes(current_url))
+        driver.current_url
+        r = requests.get(driver.current_url)
+        driver.close()
+        if  r.status_code == 200:
+            minimun, rec = min_rec_systemreq(r)
+            amazon_ = []
+    except TimeoutException:
+        print('Timeout, will skip to next game')
+
     return amazon_ , minimun, rec

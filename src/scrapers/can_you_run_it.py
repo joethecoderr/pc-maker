@@ -95,13 +95,16 @@ def min_rec_systemreq(r):
   html_home = r.content.decode('utf-8')
   parsed = html.fromstring(html_home)
   try:
-    html_list_min = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div[1]/div/div/div[4]/div[2]/div/ul/li//text()')
+    html_list_min = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div/div/div/div[2]/div/ul/li//text()')
+    #html_list_min = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div[1]/div/div/div[4]/div[2]/div/ul/li//text()')
     html_list_min_joined = [html_list_min[i] + html_list_min[i+1] for i in range(0, len(html_list_min)-1, 2)]
     print(html_list_min_joined)
-    html_list_rec = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div[1]/div/div/div[4]/div[4]/div/ul/li//text()')
+    html_list_rec = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div/div/div/div[4]/div/ul/li//text()')
+    #html_list_rec = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div[1]/div/div/div[4]/div[4]/div/ul/li//text()')
     html_list_rec_joined = [html_list_rec[i] + html_list_rec[i+1] for i in range(0, len(html_list_rec)-1, 2)]
     print(html_list_rec_joined)
     for element in range(len(html_list_min_joined)- 1):
+     
       hw, spec = html_list_min_joined[element].split(':')
       tple = (hw, spec)
       list_tokenized_min.append(tple)
@@ -129,14 +132,22 @@ def scrape(game):
     driver.get(url)
     tempu = driver.find_element_by_class_name('select2-selection__rendered')
     tempu.click()
+    #time.sleep(3)
     inputText = driver.find_element_by_class_name('select2-search__field')
     inputText.send_keys(game)
-    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'select2-results')))
-    element = driver.find_element_by_class_name('select2-results__options')
+    #time.sleep(3)
+    #wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'select2-results')))
+  
+    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'select2-results__option--highlighted')))
+   
+    #element = driver.find_element_by_class_name('select2-results__options')
+    element = driver.find_element_by_class_name('select2-results__option--highlighted')
     element.click()
+    #time.sleep(3)
     current_url = driver.current_url
     button = driver.find_element_by_id('button-cyri-bigblue')
     button.click()
+   # time.sleep(3)
     WebDriverWait(driver, 15).until(EC.url_changes(current_url))
     driver.current_url
     r = requests.get(driver.current_url)

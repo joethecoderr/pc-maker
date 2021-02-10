@@ -4,6 +4,7 @@ import pandas as  pd
 import numpy as np
 from scrapers import scrap_from_pcbenchmark
 from scrapers import scrap_from_steam
+#from scrapers import can_you_run_it
 import get_games
 from requirements import LowReqSteam, RecReqSteam, LowReqPCGBM, RecReqPCGBM
 from requirements import LowReqCanYouRunIt, RecReqCanYouRunIt
@@ -16,7 +17,6 @@ def save_data_req_steam(game,descr, data, low_or_rec):
     Base.metadata.create_all(engine)
     session = Session()
     descr = ''.join(descr)
-
     descr = re.sub('[^0-9a-zA-Z]+', ' ', descr)
     os = [row[1]  for row in data if row[0] == "OS:"] 
     if len(os) == 0: os = [""]
@@ -28,12 +28,8 @@ def save_data_req_steam(game,descr, data, low_or_rec):
     if len(gpu) == 0: gpu = [""]
     DX = [direct[1]  for direct in data if direct[0] == "DirectX:"]
     if len(DX) == 0: DX = [""]
-    
-    
     size = [size[1] for size in data if size[0] == "Storage:"]
     if len(size) == 0: size = [""]
-    
-    
     note = [note[1] for note in data if note[0] == "Additional Notes:" ] 
     if len(note) == 0: note = [""]
     #note = re.sub('\uFF1A', ' ', note[0])
@@ -170,13 +166,15 @@ def save_data_canyourunit_reqs(reqs, low_or_rec, game_name):
         session.close()
 
 def scrape_from_canyourunit(games):
-    for game in games:
+    for game in games[12:]:
+        print(game)
         if game == 'PLAYERUNKNOWN’S BATTLEGROUNDS' : game = 'PUBG'
         amazon, minimun, rec = scrape(game)
+
         if len(minimun) > 0:
-            save_data_canyourunit_reqs(minimun, "low", game)
+           save_data_canyourunit_reqs(minimun, "low", game)
         if len(rec) > 0:
-            save_data_canyourunit_reqs(rec, "rec", game)
+           save_data_canyourunit_reqs(rec, "rec", game)
 
 # def scrape_from_steam(games):
 #     for game in games:
@@ -187,21 +185,24 @@ def scrape_from_canyourunit(games):
 
 if __name__ == '__main__':
     games = get_games.Get_names('https://www.pcgamebenchmark.com/best-pc-games?tags=&sort=0')
-
-    
     print(games)
-    for game in games[221:]: #Sabotaj idx
-        if game != "Genshin Impact" and  game != "Hogwarts Legacy" and game != "Cooking Simulator" and game != "FINAL FANTASY XV" and game != "コイカツ！ / Koikatsu Party" and game != "Sabotaj" and game != "Google Stadia" :
+    
+    scrape_from_canyourunit(games)
+    
+    # for game in games[221:]: #Sabotaj idx
+    
+        
+    #     if game != "Genshin Impact" and  game != "Hogwarts Legacy" and game != "Cooking Simulator" and game != "FINAL FANTASY XV" and game != "コイカツ！ / Koikatsu Party" and game != "Sabotaj" and game != "Google Stadia" :
 
-            data_desc, merged_arr_min, merged_arr_rec, link_path  = scrap_from_steam.scrap_page(game)
-            if game.replace(" ", "_") in link_path:
-               save_data_req_steam(game, data_desc,merged_arr_min, "low")
-               save_data_req_steam(game, data_desc, merged_arr_rec, "rec")    
+    #         data_desc, merged_arr_min, merged_arr_rec, link_path  = scrap_from_steam.scrap_page(game)
+    #         if game.replace(" ", "_") in link_path:
+    #             save_data_req_steam(game, data_desc,merged_arr_min, "low")
+    #             save_data_req_steam(game, data_desc, merged_arr_rec, "rec")    
                    
-        if game != "Attack on Titan 2 - A.O.T.2 - 進撃の巨人２" and game != "コイカツ！ / Koikatsu Party"  and game != "Sabotaj"  and game != "Google Stadia":
+    #     if game != "Attack on Titan 2 - A.O.T.2 - 進撃の巨人２" and game != "コイカツ！ / Koikatsu Party"  and game != "Sabotaj"  and game != "Google Stadia":
             
-            data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrap_from_pcbenchmark.scrap_page(game)
-            save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
-            save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
+    #         data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrap_from_pcbenchmark.scrap_page(game)
+    #         save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
+    #         save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
 
 

@@ -28,11 +28,10 @@ def get_game_link(game):
         #Here we are using it to confirm that the title has "Steam".
         wait = WebDriverWait(driver,10)
         elem = driver.find_element_by_xpath("//form[(@id = 'search')]/span/input[@name = 'q']")
+        
         elem.clear()
         elem.send_keys(game)
-        
         wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'tt-open')))
-        
         elem.send_keys(Keys.ENTER)
         print(driver.current_url)
         

@@ -156,7 +156,9 @@ def save_data_canyourunit_reqs(reqs, low_or_rec, game_name):
         session.close()
 
 def scrape_from_canyourunit(games):
+    
     for game in games:
+        print('GAME!!!!: ',game)
         if game == 'PLAYERUNKNOWN’S BATTLEGROUNDS' : game = 'PUBG'
         amazon, minimun, rec = scrape(game)
         if len(minimun) > 0:
@@ -173,13 +175,14 @@ def scrape_from_steam(games):
 
 if __name__ == '__main__':
     games = get_games.Get_names('https://www.pcgamebenchmark.com/best-pc-games?tags=&sort=0')
-    for game in games:
-        data_desc, merged_arr_min, merged_arr_rec, link_path  = scrap_from_steam.scrap_page(game)
-        if game.replace(" ", "_") in link_path:
-            save_data_req_steam(game, data_desc,merged_arr_min, "low")
-            save_data_req_steam(game, data_desc, merged_arr_rec, "rec")            
-        data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrap_from_pcbenchmark.scrap_page(game)
-        save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
-        save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
+    # for game in games:
+    #     data_desc, merged_arr_min, merged_arr_rec, link_path  = scrap_from_steam.scrap_page(game)
+    #     if game.replace(" ", "_") in link_path:
+    #         save_data_req_steam(game, data_desc,merged_arr_min, "low")
+    #         save_data_req_steam(game, data_desc, merged_arr_rec, "rec")            
+    #     data_desc_pcbm, merged_arr_min_pcbm, merged_arr_rec_pcbm  = scrap_from_pcbenchmark.scrap_page(game)
+    #     save_data_req_pcbm(game,data_desc_pcbm, merged_arr_min_pcbm, "low")
+    #     save_data_req_pcbm(game,data_desc_pcbm, merged_arr_rec_pcbm, "rec")
+    scrape_from_canyourunit(games)
 
 

@@ -166,8 +166,10 @@ def save_data_canyourunit_reqs(reqs, low_or_rec, game_name):
         session.close()
 
 def scrape_from_canyourunit(games):
-    for game in games[12:]:
-        print(game)
+
+    for game in games:
+        print('GAME!!!!: ',game)
+
         if game == 'PLAYERUNKNOWN’S BATTLEGROUNDS' : game = 'PUBG'
         amazon, minimun, rec = scrape(game)
 

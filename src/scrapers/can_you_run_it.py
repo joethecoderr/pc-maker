@@ -7,9 +7,12 @@ from selenium.common.exceptions import ElementNotVisibleException
 import time
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
 import requests
 import lxml.html as html
 import re
+import warnings
+warnings.filterwarnings('ignore')
 
 
 class WebShop():
@@ -116,12 +119,48 @@ def min_rec_systemreq(r):
       tple = ()
   except:
     return []
-  return list_tokenized_min, list_tokenized_rec
+  return list_tokenized_min or [], list_tokenized_rec or []
 
 
-  
+def loop(game):
+    try:
+        url = 'https://www.systemrequirementslab.com/cyri'
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--no-startup-window')
+        driver = webdriver.Chrome('chromedriver.exe', chrome_options=chrome_options)
+        wait = WebDriverWait(driver,40)
+        driver.get(url)
+        tempu = driver.find_element_by_class_name('select2-selection__rendered')
+        tempu.click()
+        inputText = driver.find_element_by_class_name('select2-search__field')
+        inputText.send_keys(game)
+        wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'select2-results')))
+        element = driver.find_element_by_class_name('select2-results__options')
+        element.click()
+        current_url = driver.current_url
+        wait.until(EC.element_to_be_clickable((By.ID, 'button-cyri-bigblue')))
+        button = driver.find_element_by_id('button-cyri-bigblue')
+        button.click()
+        WebDriverWait(driver, 15).until(EC.url_changes(current_url))
+        driver.current_url
+        r = requests.get(driver.current_url)
+        driver.close()
+        return r
+    except TimeoutException:
+        print('Timeout, will skip to next game')
+    else:
+        r = requests.get('http://quotes.toscrape.com/')
+        r.status_code = 100
+        print(r.status_code)
+        return r
+
+
 
 def scrape(game):
+
     url = 'https://www.systemrequirementslab.com/cyri'
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--headless')
@@ -152,9 +191,14 @@ def scrape(game):
     driver.current_url
     r = requests.get(driver.current_url)
 
-    if r.status_code == 200:
+
+    r = loop(game)
+    minimun = []
+    rec = []
+    amazon_ = []
+    if  r.status_code == 200:
         time.sleep(1.5)
         minimun, rec = min_rec_systemreq(r)
         amazon_ = []
-        driver.close()
-        return amazon_ or [], minimun or [], rec or []
+        
+    return amazon_ , minimun, rec

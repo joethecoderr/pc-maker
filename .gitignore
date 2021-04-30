@@ -1,15 +1,12 @@
-/scrapers/chromedriver.exe
-/scrapers/.ipynb_checkpoints/*
-/scrapers/debug.log
-/.env/*
-/venv/*
-/debug.log
-/scrapers/__pycache__/
-/chromedriver.exe
-/chromedriver_win32 (3).zip
-/src/__pycache__/*
-/src/scrapers/__pycache__/can_you_run_it.cpython-36.pyc
-/src/scrapers/__pycache__/*
+scrapers/chromedriver.exe
+venv/*
+src/__pycache__/
+.env/*
+chromedriver.exe
+/src/chromedriver.exe
 src/scrapers/__pycache__/can_you_run_it.cpython-36.pyc
-/*.exe
-/src/scrapers/__pycache__/can_you_run_it.cpython-36.pyc
+src/scrapers/__pycache__/scrap_from_steam.cpython-36.pyc
+src/scrapers/__pycache__/scrap_from_pcbenchmark.cpython-36.pyc
+src/scrapers/debug.log
+src/chromedriver.exe
+src/scrapers/__pycache__/can_you_run_it.cpython-37.pyc

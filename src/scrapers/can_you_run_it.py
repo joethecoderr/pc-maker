@@ -7,7 +7,7 @@ from selenium.common.exceptions import ElementNotVisibleException
 import time
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException, NoSuchElementException
 import requests
 import lxml.html as html
 import re
@@ -98,12 +98,10 @@ def min_rec_systemreq(r):
   html_home = r.content.decode('utf-8')
   parsed = html.fromstring(html_home)
   try:
-    html_list_min = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div[1]/div/div/div[4]/div[2]/div/ul/li//text()')
+    html_list_min = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div/div/div/div[2]/div/ul/li//text()')
     html_list_min_joined = [html_list_min[i] + html_list_min[i+1] for i in range(0, len(html_list_min)-1, 2)]
-    print(html_list_min_joined)
-    html_list_rec = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div[1]/div/div/div[4]/div[4]/div/ul/li//text()')
+    html_list_rec = parsed.xpath('//*[@id="srl-main"]/div[2]/div[2]/main/div/div/div/div/div[4]/div/ul/li//text()')
     html_list_rec_joined = [html_list_rec[i] + html_list_rec[i+1] for i in range(0, len(html_list_rec)-1, 2)]
-    print(html_list_rec_joined)
     for element in range(len(html_list_min_joined)- 1):
       hw, spec = html_list_min_joined[element].split(':')
       tple = (hw, spec)
@@ -115,45 +113,8 @@ def min_rec_systemreq(r):
       list_tokenized_rec.append(tple)
       tple = ()
   except:
-    return []
+    pass
   return list_tokenized_min or [], list_tokenized_rec or []
-
-
-def loop(game):
-    try:
-        url = 'https://www.systemrequirementslab.com/cyri'
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--disable-dev-shm-usage')
-        chrome_options.add_argument('--no-startup-window')
-        driver = webdriver.Chrome('chromedriver.exe', chrome_options=chrome_options)
-        wait = WebDriverWait(driver,40)
-        driver.get(url)
-        tempu = driver.find_element_by_class_name('select2-selection__rendered')
-        tempu.click()
-        inputText = driver.find_element_by_class_name('select2-search__field')
-        inputText.send_keys(game)
-        wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'select2-results')))
-        element = driver.find_element_by_class_name('select2-results__options')
-        element.click()
-        current_url = driver.current_url
-        wait.until(EC.element_to_be_clickable((By.ID, 'button-cyri-bigblue')))
-        button = driver.find_element_by_id('button-cyri-bigblue')
-        button.click()
-        WebDriverWait(driver, 15).until(EC.url_changes(current_url))
-        driver.current_url
-        r = requests.get(driver.current_url)
-        driver.close()
-        return r
-    except TimeoutException:
-        print('Timeout, will skip to next game')
-    else:
-        r = requests.get('http://quotes.toscrape.com/')
-        r.status_code = 100
-        print(r.status_code)
-        return r
-
 
 
 def scrape(game):
@@ -168,27 +129,26 @@ def scrape(game):
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('--no-startup-window')
         driver = webdriver.Chrome('chromedriver.exe', chrome_options=chrome_options)
-        wait = WebDriverWait(driver,40)
+        wait = WebDriverWait(driver,5)
         driver.get(url)
         tempu = driver.find_element_by_class_name('select2-selection__rendered')
         tempu.click()
         inputText = driver.find_element_by_class_name('select2-search__field')
         inputText.send_keys(game)
-        wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'select2-results')))
-        element = driver.find_element_by_class_name('select2-results__options')
+        wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'select2-results__option--highlighted')))
+        element = driver.find_element_by_class_name('select2-results__option--highlighted')
         element.click()
         current_url = driver.current_url
         wait.until(EC.element_to_be_clickable((By.ID, 'button-cyri-bigblue')))
         button = driver.find_element_by_id('button-cyri-bigblue')
         button.click()
-        WebDriverWait(driver, 15).until(EC.url_changes(current_url))
+        WebDriverWait(driver, 5).until(EC.url_changes(current_url))
         driver.current_url
         r = requests.get(driver.current_url)
         driver.close()
         if  r.status_code == 200:
             minimun, rec = min_rec_systemreq(r)
-            amazon_ = []
-    except TimeoutException:
-        print('Timeout, will skip to next game')
+    except (TimeoutException, ElementClickInterceptedException,NoSuchElementException) as e:
+        print('There was an error when scraping this game, will skip to next game!')
 
     return amazon_ , minimun, rec
